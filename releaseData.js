@@ -3,7 +3,7 @@ var releaseArrayJson =
  {
      name: "release0",
      year: 2000,
-     url: "www.youtube.com",
+     videoId: "Fi79ry0lmm8",
      artist: "blake",
      genres: "Jazz",
      styles: "cool awesome"
@@ -11,7 +11,7 @@ var releaseArrayJson =
  {
      name: "release1",
      year: 2000,
-     url: "www.youtube.com",
+     videoId: "5-Ke3cHeob0",
      artist: "AAke",
      genres: "BBBzz",
      styles: "cDl awesome"
@@ -19,7 +19,7 @@ var releaseArrayJson =
  {
      name: "release2",
      year: 2000,
-     url: "www.youtube.com",
+     videoId: "SWoYmTAfDbk",
      artist: "Lriste",
      genres: "Rock",
      styles: "fooc"
@@ -27,7 +27,7 @@ var releaseArrayJson =
  {
      name: "release3",
      year: 2000,
-     url: "www.youtube.com",
+     videoId: "OvkLdYilxVs",
      artist: "Jonahe",
      genres: "BLAH",
      styles: "cSeesome"
@@ -35,7 +35,7 @@ var releaseArrayJson =
  {
      name: "release4",
      year: 2000,
-     url: "www.youtube.com",
+     videoId: "OL9ukN9Kk0I",
      artist: "EEEEde",
      genres: "Jazz",
      styles: "cool awesome"
@@ -43,7 +43,7 @@ var releaseArrayJson =
  {
      name: "release5",
      year: 2000,
-     url: "www.youtube.com",
+     videoId: "wj768KO7IoQ",
      artist: "Jason",
      genres: "Jazz",
      styles: "cool awesome"
@@ -51,7 +51,7 @@ var releaseArrayJson =
  {
      name: "release6",
      year: 2000,
-     url: "www.youtube.com",
+     videoId: "N5mZnEWvoZ0",
      artist: "blake",
      genres: "Jazz",
      styles: "cool awesome"
@@ -59,7 +59,7 @@ var releaseArrayJson =
  {
      name: "release7",
      year: 2000,
-     url: "www.youtube.com",
+     videoId: "Q09EvF_IKGA",
      artist: "blake",
      genres: "Jazz",
      styles: "cool awesome"
@@ -67,7 +67,7 @@ var releaseArrayJson =
  {
      name: "release8",
      year: 2000,
-     url: "www.youtube.com",
+     videoId: "www.youtube.com",
      artist: "blake",
      genres: "Jazz",
      styles: "cool awesome"
@@ -75,7 +75,7 @@ var releaseArrayJson =
  {
      name: "release9",
      year: 2000,
-     url: "www.youtube.com",
+     videoId: "www.youtube.com",
      artist: "blake",
      genres: "Jazz",
      styles: "cool awesome"

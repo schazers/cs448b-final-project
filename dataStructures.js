@@ -2,13 +2,13 @@
  ******* Release ********
  ************************/
 
-function Release(name, year, url,genres,styles,artist){
+function Release(name, year, videoId,genres,styles,artist){
     this.name = name;
     this.artist = artist;
     this.genres = genres;
     this.styles = styles;
     this.year = year;
-    this.url = url;
+    this.videoId = videoId;
 };
 
 
@@ -42,12 +42,12 @@ ReleaseArray.prototype.importFromJson = function(releaseArrayJson){
 	var jRelease = releaseArrayJson[i];
 	var name = jRelease["name"];
 	var year = jRelease["year"];
-	var url = jRelease["url"];
+	var videoId = jRelease["videoId"];
 	var artist = jRelease["artist"];
 	var styles = jRelease["styles"];
 	var genres = jRelease["genres"];
 
-	var release = new Release(name,year,url,genres,styles,artist);
+	var release = new Release(name,year,videoId,genres,styles,artist);
 	this.appendRelease(release);
     }
     return this;
@@ -381,7 +381,7 @@ function Playlist(genreTree, releaseArray,onAdd){
     this.genreTree = genreTree;
     this.list= [];
     this.cur=0;
-    this.replay=false;
+    this.loop=false;
     this.shuffle=false;
     this.onAdd=onAdd;
 };
@@ -389,21 +389,30 @@ function Playlist(genreTree, releaseArray,onAdd){
 
 Playlist.prototype.playNext = function(){
     this.cur++;
+    if(this.cur > this.list.length-1 && this.loop){
+	this.cur=0;
+    }
     return this;
 };
 
-Playlist.prototype.numSongs = function(){
+Playlist.prototype.getNumSongs = function(){
     var length = this.list.length;
     return length;
 };
 
 Playlist.prototype.getCurrentSong = function(){
-    var curSong = this.getSong(this.cur);
+    var curSong;
+    if(this.cur<this.list.length){
+	curSong = this.getSong(this.cur);
+    }
     return curSong;
 };
 
 Playlist.prototype.getCurrentRelease = function(){
-    var curRelease = this.getRelease(this.cur);
+    var curRelease;
+    if(this.cur<this.list.length){
+	curRelease = this.getRelease(this.cur);
+    }
     return curRelease;
 };
 

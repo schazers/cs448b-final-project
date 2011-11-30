@@ -3,26 +3,26 @@ var genreTreeJson = {
     {
 	"Style 1": 
 	{
-	    Blake:[1,2],
-	    Kristen:[3,4]
+	    Blake:[1,1],
+	    Kristen:[1,1]
 	},
 	"Style 2": 
 	{
-	    Jonah:[4,1],
-	    Jason:[2,0]
+	    Jonah:[2,2],
+	    Jason:[2,2]
 	}
     },
     Jazz: 
     {
 	"Style 3": 
 	{
-	    Be:[1,2],
-	    Ken:[4,2]
+	    Be:[3,3],
+	    Ken:[3,3]
 	},
 	"Style 4": 
 	{
-	    Jah:[1,1],
-	    Son:[3,5]
+	    Jah:[4,4],
+	    Son:[1,1]
 	},
 	"Style 1": 
 	{
@@ -39,9 +39,9 @@ var genreTreeJson = {
 	    Be:[7,2],
 	    Georgen:[1,1],
 	    Bob:[1,1],
-	    Foon:[1,1],
-	    Johnrgen:[1,1],
-	    rgen:[1,1]
+	    Foon:[6,1],
+	    Johnrgen:[3,1],
+	    rgen:[2,1]
 
 	}
     }
