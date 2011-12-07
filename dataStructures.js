@@ -2,16 +2,51 @@
  ******* Release ********
  ************************/
 
-function Release(name, year, videoId,genres,styles,artist){
+function Release(name, year, videoId,genre,style,artist){
     this.name = name;
     this.artist = artist;
-    this.genres = genres;
-    this.styles = styles;
+    this.genre = genre;
+    this.style = style;
     this.year = year;
     this.videoId = videoId;
 };
 
 
+Release.prototype.equals = function(o){
+    if((o instanceof Artist)){
+	var artist = o;
+	if(this.artist != artist.name){
+	    return false;
+	}else if(this.style != artist.styleName){
+	    return false;
+	}else if(this.genre != artist.genreName){
+	    return false;
+	}else{
+	    return true;
+	}
+
+    }else if((o instanceof Style)){
+	var style = o;
+	if(this.style !=style.name){
+	    return false;
+	}else if(this.genre != style.genreName){
+	    return false;
+	}else{
+	    return true;
+	}
+
+    }else if((o instanceof Genre)){
+	var genre =o;
+	if(this.genre !=genre.name){
+	    return false;
+	}else{
+	    return true;
+	}
+    }else{
+	return false;
+    }
+
+}
 
 /*****************************
  ******* ReleaseArray ********
@@ -44,10 +79,10 @@ ReleaseArray.prototype.importFromJson = function(releaseArrayJson){
 	var year = jRelease["year"];
 	var videoId = jRelease["videoId"];
 	var artist = jRelease["artist"];
-	var styles = jRelease["styles"];
-	var genres = jRelease["genres"];
+	var style = jRelease["style"];
+	var genre = jRelease["genre"];
 
-	var release = new Release(name,year,videoId,genres,styles,artist);
+	var release = new Release(name,year,videoId,genre,style,artist);
 	this.appendRelease(release);
     }
     return this;
@@ -282,33 +317,6 @@ GenreTree.prototype.importFromJson = function(json){
     }
 };
 
-/*
-
-// Old way of importing
-
-GenreTree.prototype.importGenreTreeFromJson = function(json){
-for(var genreName in json){
-var genre = new Genre(genreName);
-this.addGenre(genre);
-var jGenre = json[genreName];
-for(var styleName in jGenre){
-var style = new Style(styleName);
-this.addStyle(genreName,style);
-var jStyle = jGenre[styleName]
-for(var artistName in jStyle){
-var artist = new Artist(artistName);
-var releaseIndicies = jStyle[artistName];
-for(var i in releaseIndicies){
-var releaseIndex = releaseIndicies[i];
-artist.addReleaseIndex(releaseIndex);
-}
-this.addArtist(genreName,styleName,artist);
-}
-}
-}
-};*/
-
-
 GenreTree.prototype.getGenreReleaseIndicies = function(genreName){
     var genre = this.getGenre(genreName);
     var releaseIndiciesSet = {};
@@ -376,21 +384,111 @@ function PlaylistSong(releaseIndex, genre,style,artist){
  ********* Playlist **********
  *****************************/
 
-function Playlist(genreTree, releaseArray,onAdd){
+function Playlist(genreTree, releaseArray){
     this.releaseArray = releaseArray;
     this.genreTree = genreTree;
     this.list= [];
     this.cur=0;
+    this.playing=false;	
     this.loop=false;
     this.shuffle=false;
-    this.onAdd=onAdd;
+    this.selected=null;
+    this.started=false;
+    this.highlighted=null;
+    this.highlightedListeners=[];
+    this.songAddedListeners=[];
+    this.selectedListeners=[];
+    this.playingListeners=[];
+    this.startedListeners=[];
+    this.curListeners=[];
 };
 
 
+
+Playlist.prototype.fireEvent = function(listeners,event){
+    for(var i=0;i<listeners.length;i++){
+	var fun = listeners[i];
+	fun(event);
+    }
+}
+
+Playlist.prototype.setPlaying = function(playing){
+    if(playing!=this.playing){
+	this.playing=playing;
+	this.fireEvent(this.playingListeners,this.playing)
+    }
+}
+Playlist.prototype.getPlaying = function(){
+    return this.playing;
+}
+
+
+Playlist.prototype.setHighlighted = function(highlighted){
+    if(highlighted!=this.highlighted){
+	this.highlighted=highlighted;
+	this.fireEvent(this.highlightedListeners,this.highlighted)
+    }
+}
+Playlist.prototype.getHighlighted = function(){
+    return this.highlighted;
+}
+
+Playlist.prototype.setStarted = function(started){
+    if(started!=this.started){
+	this.started=started;
+	this.fireEvent(this.startedListeners,this.started);
+    }
+}
+Playlist.prototype.getStarted = function(){
+    return this.started;
+}
+
+Playlist.prototype.setSelected = function(selected){
+    if(selected!=this.selected){
+	this.selected=selected;
+	this.fireEvent(this.selectedListeners,this.selected)
+    }
+}
+Playlist.prototype.getSelected = function(){
+    return this.selected;
+}
+
+Playlist.prototype.setCur = function(cur){
+    if(cur!=this.cur){
+	this.cur=cur;
+	this.fireEvent(this.curListeners,this.cur)
+    }
+}
+Playlist.prototype.getCur = function(){
+    return this.cur;
+}
+
+Playlist.prototype.play = function(){
+    this.setStarted(true);
+    this.setPlaying(true);
+    return this;
+};
+
+Playlist.prototype.stop = function(){
+    this.setPlaying(false);
+    this.setStarted(false);
+    this.setCur(0);
+    return this;
+};
+
+Playlist.prototype.pause = function(){
+    this.setPlaying(false);
+    return this;
+};
+
 Playlist.prototype.playNext = function(){
-    this.cur++;
-    if(this.cur > this.list.length-1 && this.loop){
-	this.cur=0;
+    if(this.started){
+	var cur = this.getCur();
+	if(cur< this.list.length-1){
+	    this.setCur(cur+1);
+	}else{
+	    this.stop();
+	}
     }
     return this;
 };
@@ -402,16 +500,18 @@ Playlist.prototype.getNumSongs = function(){
 
 Playlist.prototype.getCurrentSong = function(){
     var curSong;
-    if(this.cur<this.list.length){
-	curSong = this.getSong(this.cur);
+    if(this.getCur()<this.list.length){
+	curSong = this.getSong(this.getCur());
     }
     return curSong;
 };
 
+
 Playlist.prototype.getCurrentRelease = function(){
     var curRelease;
     if(this.cur<this.list.length){
-	curRelease = this.getRelease(this.cur);
+	curSong = this.getCurrentSong();
+	curRelease = this.getRelease(curSong.releaseIndex);
     }
     return curRelease;
 };
@@ -428,17 +528,16 @@ Playlist.prototype.getSong = function(songIndex){
 
 
 
-Playlist.prototype.getRelease = function(songIndex){
-    var song = this.list[songIndex];
+Playlist.prototype.getRelease = function(releaseIndex){
     var release;
     try{
-	var releaseIndex = song.releaseIndex;
 	release = this.releaseArray.getRelease(releaseIndex);
     }catch(error){
 	console.log("Error: Playlist.getRelease(): ",error);
     }
     return release;
 };
+
 
 
 Playlist.prototype.addGenreSong = function(genreName){
@@ -461,6 +560,7 @@ Playlist.prototype.addRandomSong = function(releaseIndicies, genreName,styleName
     var randomReleaseIndex = releaseIndicies[randomIndex];
     var randomSong = new PlaylistSong(randomReleaseIndex,genreName,styleName,artistName);
     this.list.push(randomSong);
-    this.onAdd();
+    var songIndex = this.list.length-1;
+    this.fireEvent(this.songAddedListeners,songIndex)
     return randomSong;
 };

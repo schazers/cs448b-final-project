@@ -1,51 +1,106 @@
-var playlist = new Playlist(genreTree, releaseArray,handleSongAdded);
+var BACKGROUND_COLOR = "#FFFFFF";
+var PLAY_IMAGE = "play.png";
+var PAUSE_IMAGE = "pause.png";
+var PLAYLIST_ITEM_HIGHLIGHT_COLOR = "#5CB3FF";
+var PLAYLIST_ITEM_SELECT_COLOR = "#2B60DE";
+var playlist = new Playlist(genreTree, releaseArray);
+playlist.songAddedListeners.push(handlePlaylistSongAdded);
+playlist.selectedListeners.push(handlePlaylistSelectedChanged);
+playlist.playingListeners.push(handlePlaylistPlayingChanged);
+playlist.startedListeners.push(handlePlaylistStartedChanged);
+playlist.curListeners.push(handlePlaylistCurChanged);
+
+
+
+
+
 var playlistDiv = d3.select("#container").append("div")
     .attr("id","playlistDiv")
     .style("float","right")
-    .style("font-size","x-large")
-    .style("list-style-position","inside")
-    .style("list-style-type","none")
-    .style("text-align","center");
+    .style("width","280px")
+    .style("font-size","x-large");
+
 playlistDiv.append("h1").text("Playlist");
 
+var selectedSongBoxDiv = playlistDiv.append("div")
+    .attr("id","selectedSongBox")
+    .style("height","60px")
+    .style("margin-top","20px")
+    .style("margin-bottom","20px")
+    .style("clear","both")
+    .style("text-align","left");
+
+selectedSongBoxDiv.append("div")
+    .style("clear","both")
+    .style("float","left")
+    .text("Artist: ");
+
+selectedSongBoxDiv.append("div")
+    .attr("id","artistInfoBox")
+    .style("float","left")
+    .text("Blake");
+
+selectedSongBoxDiv.append("div")
+    .style("clear","both")
+    .style("float","left")
+    .text("Genre:");
+
+selectedSongBoxDiv.append("div")
+    .attr("id","genreInfoBox")
+    .style("float","left")
+    .text("Blues");
+
+
+
+
+playlistDiv.append("div")
+    .attr("id","player")
+    .attr("hidden","true");
 
 var playlistControllerDiv = playlistDiv.append("div")
+    .style("clear","both")
     .attr("id","playlistControllerDiv");
 
-var playlistStatusDiv = playlistControllerDiv.append("div")
-    .attr("id","playlistStatusDiv")
-    .style("float","top")
-    .text("Not Playing");
 
 playlistControllerDiv.append("button")
     .attr("id","playlistPlayButton")
+    .style("clear","both")
     .style("float","left")
     .text("Play")
-    .on("click",handlePlayButtonPressed);
+    .attr("disabled","true")
+    .on("click",play);
 
 playlistControllerDiv.append("button")
     .attr("id","playlistPauseButton")
     .style("float","left")
     .text("Pause")
-    .on("click",handlePauseButtonPressed);
+    .attr("disabled","true")
+    .on("click",pause);
+
+playlistControllerDiv.append("button")
+    .attr("id","playlistStopButton")
+    .style("float","left")
+    .text("Stop")
+    .attr("disabled","true")
+    .on("click",stop);
 
 playlistControllerDiv.append("button")
     .attr("id","playlistNextButton")
     .style("float","left")
     .text("Next")
-    .on("click",playNextSong);
+    .attr("disabled","true")
+    .on("click",next);
 
-
-var playerDiv = playlistDiv.append("div").attr("id","player").attr("hidden","true");
-playlistDiv.append("ol")
+playlistDiv.append("div")
+    .style("clear","both")
     .attr("id","playlist")
-    .style("clear","both");
-var player;
+    .style("text-align","left");
 
+var player;
 function onYouTubePlayerAPIReady() {
     player = new YT.Player('player', {
-	    height: '195',
-	    width: '320',
+	    height: '0',
+	    width: '0',
 	    videoId: '',
 	    events: {
 		'onReady': onPlayerReady,
@@ -54,62 +109,224 @@ function onYouTubePlayerAPIReady() {
         });
 };
 
+
+
 // 4. The API will call this function when the video player is ready.
-
-function handlePlayButtonPressed(){
-    playlistStatusDiv.text("Playing")
-	player.playVideo();
-}
-
-function handlePauseButtonPressed(){
-    playlistStatusDiv.text("Paused")
-	player.pauseVideo();
-}
-
-function onPlayerReady(event) {
-
-}
-
-function playNextSong(){
-    playlist.playNext();
-    var release = playlist.getCurrentRelease();
-    if(release != null){
-	var videoId = release.videoId;
-	player.loadVideoById(videoId);
-    }else{
-	//   player.stopVideo();
-    }
-}
-var done = false;
-function onPlayerStateChange(event) {
-    console.log("event.data: "+event.data);
-    if (event.data == YT.PlayerState.ENDED) {
-	playNextSong();
-    }
-}
-
-
-function handleSongAdded(){
-    var numSongs = playlist.getNumSongs();
-    var added = numSongs-1;
-    if(numSongs==1){
-	var release = playlist.getRelease(added);
+function handlePlaylistSongAdded(songIndex){
+    // first Song added
+    if(songIndex==0){
+	d3.select("#playlistPlayButton")
+	    .attr("disabled",null);
+	var song = playlist.getSong(songIndex);
+	var releaseIndex = song.releaseIndex;
+	var release = playlist.getRelease(releaseIndex);
 	var videoId = release.videoId;
 	player.cueVideoById(videoId);
     }
     displayPlaylist();
 }
+
+function handlePlaylistCurChanged(songIndex){
+    var song = playlist.getSong(songIndex);
+    var releaseIndex = song.releaseIndex;
+    var release = playlist.getRelease(releaseIndex);
+    if(release != null){
+	var videoId = release.videoId;
+	if(playlist.playing){
+	    player.loadVideoById(videoId);
+	}else{
+	    player.cueVideoById(videoId);
+	}
+    }else{
+	stop();
+    }
+    displayPlaylist();
+}
+
+function handlePlaylistStartedChanged(){
+    if(!playlist.started){
+	player.stopVideo();
+	var release = playlist.getCurrentRelease();
+	if(release != null){
+	    var videoId = release.videoId;
+	    player.cueVideoById(videoId);
+	}
+	
+	d3.select("#playlistPlayButton")
+	    .attr("disabled",null);
+	d3.select("#playlistPauseButton")
+	    .attr("disabled","true");
+	d3.select("#playlistStopButton")
+	    .attr("disabled","true");
+	d3.select("#playlistNextButton")
+	    .attr("disabled","true");
+	displayPlaylist();
+    }
+}
+
+function handlePlaylistPlayingChanged(){
+    var playing = playlist.playing;
+    if(!playing){
+	player.pauseVideo();
+	d3.select("#playlistPlayButton")
+	    .attr("disabled",null);
+	d3.select("#playlistPauseButton")
+	    .attr("disabled","true");
+	d3.select("#playlistStopButton")
+	    .attr("disabled",null);
+
+    }else{
+	player.playVideo();
+	d3.select("#playlistPlayButton")
+	    .attr("disabled","true");
+	d3.select("#playlistPauseButton")
+	    .attr("disabled",null);
+	d3.select("#playlistStopButton")
+	    .attr("disabled",null);
+	d3.select("#playlistNextButton")
+	    .attr("disabled",null);
+    }
+    displayPlaylist();
+};
+
+function handlePlaylistSelectedChanged(){
+    displayPlaylist();
+};
+
+function pause(){
+    playlist.pause();
+
+};
+function play(){
+    playlist.play();
+
+};
+function stop(){
+    playlist.stop();
+};
+function next(){
+    playlist.playNext();
+};
+
+function onPlayerReady(event) {
+
+}
+
+var done = false;
+function onPlayerStateChange(event) {
+    console.log("event.data: "+event.data);
+    if (event.data == YT.PlayerState.ENDED) {
+	next();
+    }
+}
+
+
+
+
 function displayPlaylist(){
     var pList = d3.select("#playlist");
     var songs = playlist.list;
-    pList.selectAll("li")
+
+    var items = pList.selectAll(".playlistItem")
 	.data(songs)
-	.enter().append("li")
+	.enter().append("div")
+	.attr("class","playlistItem")
+	.on("mouseover",highlightPlaylistItem)
+	.on("mouseout",deHighlightPlaylistItem)
+	.on("click",selectSong)
+	.on("dblclick",playSelectedSong);
+
+    items.selectAll(".playlistAnnotate")
+	.data(function(d,i){return [d]})
+	.enter().append("div")
+	.attr("class","playlistAnnotate")
+	.style("float","left")
+	.style("width","20px")
+	.style("height","20px")
+	.style("background-repeat","no-repeat")
+	.style("background-position","left top");
+
+
+    items.selectAll(".playlistBlurb")
+	.data(function(d,i){return [d];})
+	.attr("class","playlistBlurb")
+	.enter().append("div")
 	.text(getSongBlurb);
+
+    if(playlist.started){
+	var cur = playlist.cur;
+	if(playlist.playing){
+	    annotatePlayItem(cur);
+	}else{
+	    annotatePauseItem(cur);
+	}
+    }else{
+	deAnnotateAllItems();
+    }
 }
 
-function getSongBlurb(song,i){
-    var release = playlist.getRelease(i);
+function annotatePlayItem(index){
+    var pList = d3.select("#playlist");
+    pList.selectAll(".playlistAnnotate")
+	.filter(function(d,i){return i==index ? true : false;})
+	.style("background-image","url('"+PLAY_IMAGE+"')");
+
+    pList.selectAll(".playlistAnnotate")
+	.filter(function(d,i){return i!=index ? true : false;})
+	.style("background-image", null);
+    
+}
+function annotatePauseItem(index){
+    var pList = d3.select("#playlist");
+    pList.selectAll(".playlistAnnotate")
+	.filter(function(d,i){
+		return i==index ? true : false;})
+	.style("background-image","url('"+PAUSE_IMAGE+"')");
+
+    pList.selectAll(".playlistAnnotate")
+	.filter(function(d,i){return i!=index ? true : false;})
+	.style("background-image", null);
+}
+
+
+function deAnnotateAllItems(){
+    var pList = d3.select("#playlist");
+    pList.selectAll("div")
+	.style("background-image", null);
+}
+
+function selectSong(d,i){
+    var prevSelected = playlist.getSelected();
+    d3.select("#playlist").selectAll(".playlistItem")
+	.filter(function(d,i){return i==prevSelected})
+	.style( "background",BACKGROUND_COLOR );
+    d3.select( this ).style( "background",PLAYLIST_ITEM_SELECT_COLOR );
+    playlist.setSelected(i);
+}
+
+function playSelectedSong(d,i){
+    playlist.setCur(i);
+    playlist.play();
+}
+
+function highlightPlaylistItem(d,i){
+    d3.select( this ).style( "background",PLAYLIST_ITEM_HIGHLIGHT_COLOR );
+    playlist.setHighlighted(i);
+}
+
+function deHighlightPlaylistItem(d,i){
+    var isSelected = (playlist.selected == i);
+    playlist.setHighlighted(null);
+    if(isSelected){
+	d3.select( this ).style( "background",PLAYLIST_ITEM_SELECT_COLOR );
+    }else{
+	d3.select( this ).style( "background",BACKGROUND_COLOR );
+    }
+}
+
+function getSongBlurb(song){
+    var releaseIndex = song.releaseIndex;
+    var release = playlist.getRelease(releaseIndex);
     var name = release.name;
     var artist =release.artist;
     var blurb = "\""+name +"\" - "+artist;

@@ -3,11 +3,14 @@
 ######################
 // object that stores release information
 
-var releasObject = 
+var releaseObject = 
 {
-   name: "release name",
-   year: "release year",
-   url: "youtube url"
+     name: "release0",
+     year: 2000,
+     videoId: "Fi79ry0lmm8",
+     artist: "blake",
+     genres: "Jazz", // one genre per release
+     styles: "cool awesome" // one style per release
 }
 
 #####################
@@ -32,27 +35,35 @@ var release = [releaseObject, releaseObject, releaseObject]
 
 // the A-object has an artist key
 // the A-object artist key has a value of the artist's name
-// the A-object has a releaseIndex key
-// the A-object has a releaseIndex value of an array storing ints that are a releases index in the release index array
-// A-object = {artist: "artist name", releaseIndex: [1,...,3]}
+// the A-object has a releaseIndicies key
+// the A-object has a releaseIndicies value of an array storing ints that are a releases index in the release index array
+// A-object = {artist: "artist name", releaseIndicies: [1,...,3]}
 
-var hSruct = { genre1: {style1:[
-                                {artist:"A",releaseIndex:[1,2]},
-				{artist:"B",releaseIndex:[3,4]}
-                                ],
-			style2:[
-                                {artist:"C",releaseIndex:[5,6]},
-				{artist:"D",releaseIndex:[8,7]}
-                                ]},
+var hSruct = { genre1: 
+    	       	       {style1:
+				{A:[1,2],
+				B,[3,4],
+				C,[3,4]
+                                },
+			style2:				
+				{D:[1,2],
+				E,[3,4],
+				F,[3,4]
+                                }
+			},
 	      // contains only styles that appear are in that genre
-               genre2: {style3:[
-                                {artist:"A",releaseIndex:[1,2]},
-				{artist:"B",releaseIndex:[3,4]}
-                                ],
-			style2:[
-                                {artist:"C",releaseIndex:[5,6]},
-				{artist:"D",releaseIndex:[8,7]}
-                                ]}
+	      genre2: 
+    	       	       {style3:
+				{Artist1:[1,2],
+				F,[3,4],
+				ArtistName,[3,4]
+                                },
+			style2:				
+				{D:[1,2],
+				E,[3,4],
+				F,[3,4]
+                                }
+			}
              }
 
 
