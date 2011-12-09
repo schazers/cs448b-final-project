@@ -4,6 +4,7 @@ var PAUSE_IMAGE = "pause.png";
 var PLAYLIST_ITEM_HIGHLIGHT_COLOR = "#5CB3FF";
 var PLAYLIST_ITEM_SELECT_COLOR = "#2B60DE";
 var playlist = new Playlist(genreTree, releaseArray);
+
 playlist.songAddedListeners.push(handlePlaylistSongAdded);
 playlist.selectedListeners.push(handlePlaylistSelectedChanged);
 playlist.playingListeners.push(handlePlaylistPlayingChanged);
@@ -16,7 +17,7 @@ playlist.curListeners.push(handlePlaylistCurChanged);
 
 var playlistDiv = d3.select("#container").append("div")
     .attr("id","playlistDiv")
-    .style("float","right")
+    .style("float","left")
     .style("width","280px")
     .style("font-size","x-large");
 
@@ -37,8 +38,8 @@ selectedSongBoxDiv.append("div")
 
 selectedSongBoxDiv.append("div")
     .attr("id","artistInfoBox")
-    .style("float","left")
-    .text("Blake");
+    .style("float","left");
+
 
 selectedSongBoxDiv.append("div")
     .style("clear","both")
@@ -47,8 +48,17 @@ selectedSongBoxDiv.append("div")
 
 selectedSongBoxDiv.append("div")
     .attr("id","genreInfoBox")
+    .style("float","left");
+
+selectedSongBoxDiv.append("div")
+    .style("clear","both")
     .style("float","left")
-    .text("Blues");
+    .text("Style:");
+
+selectedSongBoxDiv.append("div")
+    .attr("id","styleInfoBox")
+    .style("float","left");
+
 
 
 
@@ -104,12 +114,16 @@ function onYouTubePlayerAPIReady() {
 	    videoId: '',
 	    events: {
 		'onReady': onPlayerReady,
+		'onError': handleVideoError,
 		'onStateChange': onPlayerStateChange
 	    }
         });
 };
 
-
+function handleVideoError(){
+    console.log("SONG NOT AVAILABLE");
+    next();
+}
 
 // 4. The API will call this function when the video player is ready.
 function handlePlaylistSongAdded(songIndex){
@@ -190,6 +204,20 @@ function handlePlaylistPlayingChanged(){
 };
 
 function handlePlaylistSelectedChanged(){
+    var selectedSongIndex = playlist.getSelected();
+    var song = playlist.getSong(selectedSongIndex);
+    var releaseIndex = song.releaseIndex;
+    var release = playlist.getRelease(releaseIndex);
+    var artist = release.artist;
+    var genre = release.genre;
+    var style = release.style;
+
+    d3.select("#artistInfoBox")
+	.text(artist);
+    d3.select("#genreInfoBox")
+	.text(genre);
+    d3.select("#styleInfoBox")
+	.text(style);
     displayPlaylist();
 };
 
@@ -215,7 +243,7 @@ function onPlayerReady(event) {
 var done = false;
 function onPlayerStateChange(event) {
     console.log("event.data: "+event.data);
-    if (event.data == YT.PlayerState.ENDED) {
+    if (event.data == YT.PlayerState.ENDED ) {
 	next();
     }
 }

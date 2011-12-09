@@ -12,41 +12,7 @@ function Release(name, year, videoId,genre,style,artist){
 };
 
 
-Release.prototype.equals = function(o){
-    if((o instanceof Artist)){
-	var artist = o;
-	if(this.artist != artist.name){
-	    return false;
-	}else if(this.style != artist.styleName){
-	    return false;
-	}else if(this.genre != artist.genreName){
-	    return false;
-	}else{
-	    return true;
-	}
 
-    }else if((o instanceof Style)){
-	var style = o;
-	if(this.style !=style.name){
-	    return false;
-	}else if(this.genre != style.genreName){
-	    return false;
-	}else{
-	    return true;
-	}
-
-    }else if((o instanceof Genre)){
-	var genre =o;
-	if(this.genre !=genre.name){
-	    return false;
-	}else{
-	    return true;
-	}
-    }else{
-	return false;
-    }
-
-}
 
 /*****************************
  ******* ReleaseArray ********
@@ -117,8 +83,12 @@ Artist.prototype.equals = function(artist){
     }else{
 	return true;
     }
-}
-
+};
+Artist.prototype.toString = function(){
+    var out = "G:"+this.genreName+"S:"+this.styleName+"A:"+this.name;
+    out = out.replace(/\W+/g,"_");
+    return out;
+};
 
 /*****************************
  *********** Style ***********
@@ -129,7 +99,11 @@ function Style(genreName,name){
     this.name = name;
     this.artists = {};
 };
-
+Style.prototype.toString = function(){
+    var out= "G:"+this.genreName+"S:"+this.name;
+    out = out.replace(/\W+/g,"_");
+    return out;
+};
 Style.prototype.equals = function(style){
     if(!(style instanceof Style)){
 	return false;
@@ -141,11 +115,11 @@ Style.prototype.equals = function(style){
 	return true;
     }
 }
-Style.prototype.addArtist = function(artist){
-    var artistName = artist.name;
-    this.artists[artistName]=artist;
-    return this;
-};
+    Style.prototype.addArtist = function(artist){
+	var artistName = artist.name;
+	this.artists[artistName]=artist;
+	return this;
+    };
 
 Style.prototype.getArtist = function(artistName){
     return this.artists[artistName];
@@ -171,16 +145,16 @@ Style.prototype.importFromJson= function(genreName,styleName,jStyle){
 	}
 	this.addArtist(artist);
     }
-}
+};
 
 /*****************************
  *********** Genre ***********
  *****************************/
 
-    function Genre(name){
-	this.name = name;
-	this.styles = {};
-    };
+function Genre(name){
+    this.name = name;
+    this.styles = {};
+};
 
 Genre.prototype.addStyle = function(style){
     var styleName = style.name;
@@ -235,15 +209,21 @@ Genre.prototype.importFromJson = function(genreName,jGenre){
     }
 };
 
-Genre.prototype.equals = function(genre){
-    if(!(genre instanceof Genre)){
-	return false;
-    }else if(this.name != genre.name){
-	return false;
-    }else{
-	return true;
-    }
+
+Genre.prototype.toString = function(){
+    var out= "G:"+this.name ;
+    out = out.replace(/\W+/g,"_");
+    return out;
 }
+    Genre.prototype.equals = function(genre){
+	if(!(genre instanceof Genre)){
+	    return false;
+	}else if(this.name != genre.name){
+	    return false;
+	}else{
+	    return true;
+	}
+    };
 
 
 /*****************************
@@ -253,6 +233,11 @@ Genre.prototype.equals = function(genre){
 
 function GenreTree(){
     this.genreTree = {};
+};
+
+
+GenreTree.prototype.toString = function(){
+    return "BIG_DADDY_GENRE_TREE";
 };
 
 GenreTree.prototype.addGenre = function(genre){
@@ -379,29 +364,70 @@ function PlaylistSong(releaseIndex, genre,style,artist){
     this.style = style;
     this.artist = artist;
 };
+
+
+PlaylistSong.prototype.equals = function(o){
+    if((o instanceof Artist)){
+	var artist = o;
+	if(this.artist != artist.name){
+	    return false;
+	}else if(this.style != artist.styleName){
+	    return false;
+	}else if(this.genre != artist.genreName){
+	    return false;
+	}else{
+	    return true;
+	}
+
+    }else if((o instanceof Style)){
+	var style = o;
+	if(this.style !=style.name){
+	    return false;
+	}else if(this.genre != style.genreName){
+	    return false;
+	}else{
+	    return true;
+	}
+
+    }else if((o instanceof Genre)){
+	var genre =o;
+	if(this.genre !=genre.name){
+	    return false;
+	}else{
+	    return true;
+	}
+    }else{
+	return false;
+    }
+
+}
+
     
 /*****************************
  ********* Playlist **********
  *****************************/
 
-function Playlist(genreTree, releaseArray){
-    this.releaseArray = releaseArray;
-    this.genreTree = genreTree;
-    this.list= [];
-    this.cur=0;
-    this.playing=false;	
-    this.loop=false;
-    this.shuffle=false;
-    this.selected=null;
-    this.started=false;
-    this.highlighted=null;
-    this.highlightedListeners=[];
-    this.songAddedListeners=[];
-    this.selectedListeners=[];
-    this.playingListeners=[];
-    this.startedListeners=[];
-    this.curListeners=[];
-};
+    function Playlist(genreTree, releaseArray){
+	this.releaseArray = releaseArray;
+	this.genreTree = genreTree;
+
+	this.xmlHttp=null;
+	this.list= [];
+	this.cur=0;
+	this.playing=false;	
+	this.loop=false;
+	this.shuffle=false;
+	this.selected=null;
+	this.started=false;
+	this.highlighted=null;
+	this.highlightedListeners=[];
+	this.songAddedListeners=[];
+	this.selectedListeners=[];
+	this.playingListeners=[];
+	this.startedListeners=[];
+	this.curListeners=[];
+	this.videoErrorListeners=[];
+    };
 
 
 
@@ -410,17 +436,17 @@ Playlist.prototype.fireEvent = function(listeners,event){
 	var fun = listeners[i];
 	fun(event);
     }
-}
+};
 
 Playlist.prototype.setPlaying = function(playing){
     if(playing!=this.playing){
 	this.playing=playing;
 	this.fireEvent(this.playingListeners,this.playing)
     }
-}
+};
 Playlist.prototype.getPlaying = function(){
     return this.playing;
-}
+};
 
 
 Playlist.prototype.setHighlighted = function(highlighted){
@@ -428,40 +454,40 @@ Playlist.prototype.setHighlighted = function(highlighted){
 	this.highlighted=highlighted;
 	this.fireEvent(this.highlightedListeners,this.highlighted)
     }
-}
+};
 Playlist.prototype.getHighlighted = function(){
     return this.highlighted;
-}
+};
 
 Playlist.prototype.setStarted = function(started){
     if(started!=this.started){
 	this.started=started;
 	this.fireEvent(this.startedListeners,this.started);
     }
-}
+};
 Playlist.prototype.getStarted = function(){
     return this.started;
-}
+};
 
 Playlist.prototype.setSelected = function(selected){
     if(selected!=this.selected){
 	this.selected=selected;
 	this.fireEvent(this.selectedListeners,this.selected)
     }
-}
+};
 Playlist.prototype.getSelected = function(){
     return this.selected;
-}
+};
 
 Playlist.prototype.setCur = function(cur){
     if(cur!=this.cur){
 	this.cur=cur;
 	this.fireEvent(this.curListeners,this.cur)
     }
-}
+};
 Playlist.prototype.getCur = function(){
     return this.cur;
-}
+};
 
 Playlist.prototype.play = function(){
     this.setStarted(true);
@@ -556,11 +582,42 @@ Playlist.prototype.addArtistSong = function(genreName,styleName, artistName){
 };
 
 Playlist.prototype.addRandomSong = function(releaseIndicies, genreName,styleName,artistName){
+    if(releaseIndicies.length ==0){
+	this.fireEvent(this.videoErrorListeners,"Error: No Valid Songs Left to Add");
+    }
     var randomIndex = Math.floor(Math.random()*releaseIndicies.length);
     var randomReleaseIndex = releaseIndicies[randomIndex];
     var randomSong = new PlaylistSong(randomReleaseIndex,genreName,styleName,artistName);
-    this.list.push(randomSong);
-    var songIndex = this.list.length-1;
-    this.fireEvent(this.songAddedListeners,songIndex)
-    return randomSong;
+    var release = this.getRelease(randomReleaseIndex);
+    var videoId = release.videoId;
+    var playlist = this;
+
+    var callback= function() 
+    {
+	if (this.readyState == 4 && this.status == 200 ){
+	    if ( this.responseText != "Not found" ){
+		var videoJSON = eval(this.responseText);
+		if(videoJSON.error){
+		    releasIndicies = releaseIndicies.splice(randomIndex,1);
+		    playlist.addRandomSong(releaseIndicies, genreName,styleName,artistName);
+		}else{
+		    playlist.list.push(randomSong);
+		    var songIndex = playlist.list.length-1;
+		    playlist.fireEvent(playlist.songAddedListeners,songIndex);
+		}
+	    }                    
+	}
+    };
+    this.checkVideoExists(videoId,callback);
 };
+
+Playlist.prototype.checkVideoExists = function(videoId,callback)
+{
+    var Url = "https://gdata.youtube.com/feeds/api/videos/"+videoId+"?v=2&alt=jsonc&callback=eval"
+    console.log(Url);
+    this.xmlHttp = new XMLHttpRequest(); 
+    this.xmlHttp.onreadystatechange =callback;
+    this.xmlHttp.open( "GET", Url, true );
+    this.xmlHttp.send( null );
+
+}
