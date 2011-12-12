@@ -28,19 +28,20 @@ var textlist_selected_genre;
 var textlist_selected_style;
 var textlist_selected_artist;
 
-var body = d3.select("body").style("background",BACKGROUND_COLOR);
 
-createList("Genre",GENRE_UL_CLASS);
-createList("Style",STYLE_UL_CLASS+" "+NON_GENRE_UL_CLASS);
-createList("Artist",ARTIST_UL_CLASS+" "+NON_STYLE_UL_CLASS+" "+NON_GENRE_UL_CLASS);
-setListStyle();
-displayGenres();
+function initSongList(){
+    
+    d3.select("#container").selectAll("*").remove();
+    createList("Genre",GENRE_UL_CLASS);
+    createList("Style",STYLE_UL_CLASS+" "+NON_GENRE_UL_CLASS);
+    createList("Artist",ARTIST_UL_CLASS+" "+NON_STYLE_UL_CLASS+" "+NON_GENRE_UL_CLASS);
+    setListStyle();
+    displayGenres();
+}
 
 
-var genreList2 = d3.select("#GenreList");
 function createList(type,listClass){
-    var container = d3.select("#container");    
-    var div = container.append("div")
+    var div = d3.select("#container").append("div")
 	.attr("id",type+"Div")
 	.attr("class","listDiv");
 
@@ -49,50 +50,31 @@ function createList(type,listClass){
 	.attr("class","listHeader list");
     header.append("li")
 	.text(type);
-    header.append("li")
-	.append("button")
-	.text("Add")
-	.attr("id",type+"Button")
-	.attr("disabled","disabled")
-	.on("click",addSong);
+    header.append("li");
     var list =  div.append("ul")
 	.attr("id",type+"List")
-	.attr("class","list "+listClass);
+	.attr("class","ullist list "+listClass);
 }
 
 
 function setListStyle(){
     d3.selectAll(".listDiv")
 	.style("float","left");
+    d3.selectAll(".ullist")
+	.style("height","300px")
+	.style("overflow","auto");
     d3.selectAll(".list")
+	.style("width","150px")
 	.style("list-style-position","inside")
 	.style("list-style-type","none")
 	.style("text-align","center");
+
     d3.selectAll(".listHeader")
 	.style("font-size","x-large");
 }
 
 
 
-function addSong(){
-    var id = d3.select( this ).attr( "id");
-    if(id == "GenreButton"){
-	var genre = textlist_selected_genre;
-	if(genre!=null){
-	    playlist.addGenreSong(genre.name);
-	}
-    }else if(id == "StyleButton"){
-	var style = textlist_selected_style;
-	if(style!=null){
-	    playlist.addStyleSong(style.genreName,style.name);
-	}
-    }else if(id == "ArtistButton"){
-	var artist = textlist_selected_artist;
-	if(artist!=null){
-	    playlist.addArtistSong(artist.genreName,artist.styleName,artist.name);
-	}
-    }
-}
 
 function highlightListItem(d,i){
     d3.select( this ).style( "background",LIST_ITEM_HIGHLIGHT_COLOR );
@@ -108,6 +90,10 @@ function deHighlightListItem(d,i){
 }
 
 function selectItem(d,i){
+
+    if(event instanceof MouseEvent && event.shiftKey && !(d instanceof GenreTree)){
+	addSong(d);
+    }
     d3.select(this.parentNode)
 	.selectAll("li")
 	.attr("selected","false")
@@ -126,8 +112,6 @@ function selectItem(d,i){
 	    displayStyles(genre);
 	    var style = new Style("","");
 	    displayArtists(style);
-	    d3.select("#GenreButton")
-		.attr("disabled",null);
 	}
     }else if(d instanceof Style){
     	var style = d;
@@ -136,16 +120,12 @@ function selectItem(d,i){
 	    textlist_selected_style = style;
 	    textlist_selected_artist = null;
 	    displayArtists(style);
-	    d3.select("#StyleButton")
-		.attr("disabled",null);
 	}
     }else if(d instanceof Artist){
 	var artist = d;
 	if(textlist_selected_artist == null || !textlist_selected_artist.equals(artist)){
 	    // remove items from non genre list
 	    textlist_selected_artist = artist;
-	    d3.select("#ArtistButton")
-		.attr("disabled",null);
 	}
     }
 }
@@ -182,15 +162,13 @@ function displayStyles(genre){
     styleList.selectAll("li")
 	.data(styles,getStyleKey)
 	.exit().remove();
-
-    d3.select("#StyleButton")
-	.attr("disabled","disabled");
-
 }
+
 function getStyleKey(style){
     var key = style.genreName+"_"+style.name;
     return key;
 }
+
 function getArtistKey(artist){
     var key = artist.genreName+"_"+artist.styleName+"_"+artist.name;
     return key;
@@ -212,6 +190,4 @@ function displayArtists(style){
 	.data(artists,getArtistKey)
 	.exit().remove();
 
-    d3.select("#ArtistButton")
-	.attr("disabled","disabled");
 }

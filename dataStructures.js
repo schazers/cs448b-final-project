@@ -59,11 +59,13 @@ ReleaseArray.prototype.importFromJson = function(releaseArrayJson){
  *****************************/
 
 
-function Artist (genreName,styleName,name){
+function Artist (genreName,styleName,name,parent){
     this.styleName =styleName;
     this.genreName = genreName;
     this.name = name;
     this.releaseIndicies = [];
+    this.parent=parent;
+    this.type = "Artist";
 };
 
 Artist.prototype.addReleaseIndex = function(releaseIndex){
@@ -94,10 +96,12 @@ Artist.prototype.toString = function(){
  *********** Style ***********
  *****************************/
 
-function Style(genreName,name){
+function Style(genreName,name,parent){
     this.genreName = genreName;
     this.name = name;
     this.artists = {};
+    this.parent = parent;
+    this.type = "Style";
 };
 Style.prototype.toString = function(){
     var out= "G:"+this.genreName+"S:"+this.name;
@@ -137,7 +141,7 @@ Style.prototype.getArtists = function(){
 
 Style.prototype.importFromJson= function(genreName,styleName,jStyle){
     for(var artistName in jStyle){
-	var artist = new Artist(genreName,styleName,artistName);
+	var artist = new Artist(genreName,styleName,artistName,this);
 	var releaseIndicies = jStyle[artistName];
 	for(var i in releaseIndicies){
 	    var releaseIndex = releaseIndicies[i];
@@ -151,9 +155,11 @@ Style.prototype.importFromJson= function(genreName,styleName,jStyle){
  *********** Genre ***********
  *****************************/
 
-function Genre(name){
+function Genre(name,parent){
     this.name = name;
+    this.parent = parent;
     this.styles = {};
+    this.type = "Genre";
 };
 
 Genre.prototype.addStyle = function(style){
@@ -203,7 +209,7 @@ Genre.prototype.getStyles = function(){
 Genre.prototype.importFromJson = function(genreName,jGenre){
     for(var styleName in jGenre){
 	var jStyle = jGenre[styleName];
-	var style = new Style(genreName,styleName);
+	var style = new Style(genreName,styleName,this);
 	style.importFromJson(genreName,styleName,jStyle);
 	this.addStyle(style);
     }
@@ -233,11 +239,17 @@ Genre.prototype.toString = function(){
 
 function GenreTree(){
     this.genreTree = {};
+    this.name="Music";
+    this.type = "GenreTree";
 };
 
 
 GenreTree.prototype.toString = function(){
     return "BIG_DADDY_GENRE_TREE";
+};
+
+GenreTree.prototype.equals = function(genreTree){
+    return genreTree instanceof GenreTree;
 };
 
 GenreTree.prototype.addGenre = function(genre){
@@ -296,7 +308,7 @@ GenreTree.prototype.getArtist = function(genreName,styleName, artistName){
 GenreTree.prototype.importFromJson = function(json){
     for(var genreName in json){
 	var jGenre = json[genreName];
-	var genre = new Genre(genreName);
+	var genre = new Genre(genreName,this);
 	genre.importFromJson(genreName,jGenre);
 	this.addGenre(genre);
     }
@@ -584,6 +596,7 @@ Playlist.prototype.addArtistSong = function(genreName,styleName, artistName){
 Playlist.prototype.addRandomSong = function(releaseIndicies, genreName,styleName,artistName){
     if(releaseIndicies.length ==0){
 	this.fireEvent(this.videoErrorListeners,"Error: No Valid Songs Left to Add");
+	return;
     }
     var randomIndex = Math.floor(Math.random()*releaseIndicies.length);
     var randomReleaseIndex = releaseIndicies[randomIndex];
@@ -598,9 +611,11 @@ Playlist.prototype.addRandomSong = function(releaseIndicies, genreName,styleName
 	    if ( this.responseText != "Not found" ){
 		var videoJSON = eval(this.responseText);
 		if(videoJSON.error){
+		    console.log("DOESNT WORK:"+ release.artist + " "+videoId);
 		    releasIndicies = releaseIndicies.splice(randomIndex,1);
 		    playlist.addRandomSong(releaseIndicies, genreName,styleName,artistName);
 		}else{
+		    console.log("WORKS:"+ release.artist+ " "+videoId);
 		    playlist.list.push(randomSong);
 		    var songIndex = playlist.list.length-1;
 		    playlist.fireEvent(playlist.songAddedListeners,songIndex);

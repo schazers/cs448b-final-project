@@ -6,20 +6,33 @@
     <script src="http://www.youtube.com/player_api"></script>
     <script type="text/javascript" src="d3/d3.js"></script>
     <script type="text/javascript" src="d3/d3.layout.js"></script>
-    <script type="text/javascript" src="releaseData.js"></script>
-    <script type="text/javascript" src="genreTree.js"></script>
+    <script type="text/javascript" src="genreTree3.js"></script>
+    <script type="text/javascript" src="releaseData3.js"></script>
+
     <script type="text/javascript" src="dataStructures.js"></script>
-
-
     <script type="text/javascript" src="loadData.js"></script>
   </head>
   <body>
-    <div id="container" class="unselectable">
+    <div id="switch" class="unselectable switches">
+      <button id="listSwitch" class="switchButton" onclick="handleSwitch(LIST_SWITCH)">List</button>
+      <button id="burstSwitch" class="switchButton" onclick="handleSwitch(BURST_SWITCH)">Burst</button>
+      <button id="packSwitch" class="switchButton" onclick="handleSwitch(PACK_SWITCH)">Pack</button>
+    </div>
+    <div id="playlistDiv" class="unselectable playlistDiv">
 
     </div>
+    <div id="container" class="unselectable container">
+
+    </div>
+
+
+    <script type="text/javascript" src="initVis.js"></script>
     <script type="text/javascript" src="playlist.js"></script>
-    <script type="text/javascript" src="test.js"></script>
+    <script type="text/javascript" src="songpack.js"></script>
     <script type="text/javascript" src="songburst.js"></script>
+    <script type="text/javascript" src="textList.js"></script>
+    <script type="text/javascript" src="switch.js"></script>
+
 
   </body>
 

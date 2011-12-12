@@ -1,6 +1,32 @@
+.leaf circle {
+  fill: #ff7f0e;
+  fill-opacity: 1;
+}
+
+text {
+  font: 10px sans-serif;
+}
+
+
+circle {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+text {
+  font: 10px sans-serif;
+}
+
+
 .unselectable {
    -moz-user-select: none;
    -khtml-user-select: none;
    user-select: none;
    cursor:default;	
+}
+
+.playlistDiv{
+	float:left;
+	     width:280px;
+	      font-size:x-large;
 }

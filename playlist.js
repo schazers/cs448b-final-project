@@ -15,7 +15,7 @@ playlist.curListeners.push(handlePlaylistCurChanged);
 
 
 
-var playlistDiv = d3.select("#container").append("div")
+var playlistDiv = d3.select("#playlistDiv")
     .attr("id","playlistDiv")
     .style("float","left")
     .style("width","280px")
@@ -359,4 +359,23 @@ function getSongBlurb(song){
     var artist =release.artist;
     var blurb = "\""+name +"\" - "+artist;
     return blurb;
+}
+
+function addSong(d){
+    if(d instanceof Genre){
+	var genre = d;
+	if(genre!=null){
+	    playlist.addGenreSong(genre.name);
+	}
+    }else if(d instanceof Style){
+	var style = d;
+	if(style!=null){
+	    playlist.addStyleSong(style.genreName,style.name);
+	}
+    }else if(d instanceof Artist){
+	var artist = d;
+	if(artist!=null){
+	    playlist.addArtistSong(artist.genreName,artist.styleName,artist.name);
+	}
+    }
 }
