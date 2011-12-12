@@ -135,7 +135,12 @@ function handlePlaylistSongAdded(songIndex){
 	var releaseIndex = song.releaseIndex;
 	var release = playlist.getRelease(releaseIndex);
 	var videoId = release.videoId;
-	player.cueVideoById(videoId);
+	try{
+	    player.cueVideoById(videoId);
+	}catch(error){
+	    console.log(error);
+	    playlist.list=[];
+	}
     }
     displayPlaylist();
 }
