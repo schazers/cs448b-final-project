@@ -30,7 +30,7 @@ var textlist_selected_artist;
 
 
 function initSongList(){
-    
+    playlist.highlightedListeners= [handlePlaylistSongHighlightedTextList];
     d3.select("#container").selectAll("*").remove();
     createList("Genre",GENRE_UL_CLASS);
     createList("Style",STYLE_UL_CLASS+" "+NON_GENRE_UL_CLASS);
@@ -75,7 +75,30 @@ function setListStyle(){
 }
 
 
+function handlePlaylistSongHighlightedTextList(index){
 
+    if(index!=null){
+	var song = playlist.getSong(index);
+	var release = playlist.getRelease(song.releaseIndex);
+	d3.selectAll(".music").each(function(d){
+		var shouldSelect = song.equals(d);
+		/*		if(d instanceof Genre && song.style){
+		    shouldSelect = false;
+		}
+		if(d instanceof Style && song.artist){
+		    shouldSelect = false;
+		}*/
+		if(shouldSelect){
+		    d3.select("#"+d.toString()).each(highlightListItem);
+		}else{
+		    d3.select("#"+d.toString()).each(deHighlightListItem);
+		}
+	    });
+    }else{
+	d3.selectAll(".music").each(deHighlightListItem);
+
+	}
+}
 
 function highlightListItem(d,i){
     d3.select( this ).style( "background",LIST_ITEM_HIGHLIGHT_COLOR );
@@ -135,9 +158,11 @@ function selectItem(d,i){
 function displayGenres(){
     var genreList = d3.select("#GenreList");
     var genres = genreTree.getGenres();
-    genreList.selectAll("li")
-	.data(genres,function(d){return d.name})
-	.enter().append("li")
+    var genreData = genreList.selectAll("li")
+	.data(genres,function(d){return d.toString});
+    genreData.enter().append("li")
+	.attr("class","music")
+	.attr("id",function(d){return d.toString()})
 	.attr("selected","false")
 	.text(function(d){
 		return d.name;
@@ -145,50 +170,43 @@ function displayGenres(){
 	.on("mouseover",highlightListItem)
 	.on("mouseout",deHighlightListItem)
 	.on("click",selectItem);
+    genreData.exit().remove();
 
 }
 
 function displayStyles(genre){
     var styleList = d3.select("#StyleList");
     var styles =genre.getStyles();
-    styleList.selectAll("li")
-	.data(styles,getStyleKey)
-	.enter().append("li")
+    var styleData= styleList.selectAll("li")
+	.data(styles,function(d){return d.toString()});
+
+    styleData.enter().append("li")
+	.attr("class","music")
+	.attr("id",function(d){return d.toString()})
 	.attr("selected","false")
 	.text(function(d){return d.name})
 	.on("mouseover",highlightListItem)
 	.on("mouseout",deHighlightListItem)
 	.on("click",selectItem);
 
-    styleList.selectAll("li")
-	.data(styles,getStyleKey)
-	.exit().remove();
+    styleData.exit().remove();
 }
 
-function getStyleKey(style){
-    var key = style.genreName+"_"+style.name;
-    return key;
-}
-
-function getArtistKey(artist){
-    var key = artist.genreName+"_"+artist.styleName+"_"+artist.name;
-    return key;
-}
 
 function displayArtists(style){
     var artistList = d3.select("#ArtistList");
     var artists =style.getArtists();
-    artistList.selectAll("li")
-	.data(artists,getArtistKey)
+    var artistData = artistList.selectAll("li")
+	.data(artists,function(d){return d.toString()});
+    artistData
 	.enter().append("li")
+	.attr("class","music")
+	.attr("id",function(d){return d.toString()})
 	.attr("selected","false")
 	.text(function(d){return d.name})
 	.on("mouseover",highlightListItem)
 	.on("mouseout",deHighlightListItem)
 	.on("click",selectItem);
 
-    artistList.selectAll("li")
-	.data(artists,getArtistKey)
-	.exit().remove();
-
+    artistData.exit().remove();
 }

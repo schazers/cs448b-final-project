@@ -10,6 +10,7 @@ playlist.selectedListeners.push(handlePlaylistSelectedChanged);
 playlist.playingListeners.push(handlePlaylistPlayingChanged);
 playlist.startedListeners.push(handlePlaylistStartedChanged);
 playlist.curListeners.push(handlePlaylistCurChanged);
+playlist.errorListeners.push(handleVideoError);
 
 
 
@@ -120,6 +121,9 @@ playlistControllerDiv.append("button")
 playlistDiv.append("div")
     .style("clear","both")
     .attr("id","playlist")
+    .style("overflow","auto")
+    .style("width","200px")
+    .style("height","400px")
     .style("text-align","left");
 
 var player;
@@ -136,7 +140,7 @@ function onYouTubePlayerAPIReady() {
         });
 };
 
-function handleVideoError(){
+function handleVideoError(error){
     console.log("SONG NOT AVAILABLE");
     next();
 }
@@ -258,7 +262,7 @@ function next(){
 };
 
 function onPlayerReady(event) {
-
+    initSongList();
 }
 
 var done = false;

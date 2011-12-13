@@ -34,5 +34,8 @@ function handleSwitch(switchVal){
 	.style("background-color", "#444444")
     }
 }
+<<<<<<< HEAD
 
 initSongList();
+=======
+>>>>>>> 1ada0940cbaea4d3fadf9a0ac76c07d1f003e68f

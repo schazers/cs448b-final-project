@@ -1,4 +1,4 @@
-//playlist.highlightedListeners.push(handlePlaylistSongHighlighted);
+
 var SONGBURST_BRIGHTEN_CONSTANT=0.3;
 var container = d3.select("#container");
 var r = Math.min(w, h) / 2,
@@ -49,6 +49,7 @@ var path;
 var labels;
 var textPaths;
 function initSongBurst(){
+    playlist.highlightedListeners= [handlePlaylistSongHighlightedSongburst];
     d3.select("#container").selectAll("*").remove();
     var vis = d3.select("#container").append("svg:svg")
 	.attr("id","vis")
@@ -124,7 +125,7 @@ function getLabelText(d,i){
 	return d.name;
     }
 }
-function handlePlaylistSongHighlighted(index){
+function handlePlaylistSongHighlightedSongburst(index){
 
     if(index!=null){
 	var song = playlist.getSong(index);

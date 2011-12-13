@@ -32,6 +32,7 @@ var pack = d3.layout.pack()
 
 
 function initSongPack(){
+    playlist.highlightedListeners= [handlePlaylistSongHighlightedSongpack];
     d3.select("#container").selectAll("*").remove();
     var vis = d3.select("#container").append("svg:svg")
 	.attr("id","vis")
@@ -51,6 +52,27 @@ function initSongPack(){
     var stayTween = tweenStay(genreTree,genreTree.x,genreTree.y,genreTree.r,1);
     var exitTween = tweenUpper(genreTree,genreTree.x,genreTree.y,genreTree.r,1);
     displayBubbleData(genreTree,enterTween,stayTween,exitTween);
+}
+
+
+function handlePlaylistSongHighlightedSongpack(index){
+
+    if(index!=null){
+	var song = playlist.getSong(index);
+	d3.selectAll(".node").fill(function(d){
+		var drawnFrom=song.equals(d)
+		    if(dranFrom){
+			return d3.rgb(fill(d.name)).brighter(SONGBUBBLE_BRIGHTEN_CONSTANT)
+		    }else{
+			return fill(d.name);
+		    } 
+	    });
+    }else{
+	d3.selectAll(".node").fill(function(d){
+			return fill(d.name);
+	    });
+
+    }
 }
 
 

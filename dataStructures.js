@@ -220,16 +220,16 @@ Genre.prototype.toString = function(){
     var out= "G:"+this.name ;
     out = out.replace(/\W+/g,"_");
     return out;
-}
-    Genre.prototype.equals = function(genre){
-	if(!(genre instanceof Genre)){
-	    return false;
-	}else if(this.name != genre.name){
-	    return false;
-	}else{
-	    return true;
-	}
-    };
+};
+Genre.prototype.equals = function(genre){
+    if(!(genre instanceof Genre)){
+	return false;
+    }else if(this.name != genre.name){
+	return false;
+    }else{
+	return true;
+    }
+};
 
 
 /*****************************
@@ -353,7 +353,10 @@ GenreTree.prototype.getStyleReleaseIndicies = function(genreName,styleName){
 
 GenreTree.prototype.getArtistReleaseIndicies = function(genreName,styleName,artistName){
     var artist = this.getArtist(genreName,styleName,artistName);
-    var releases = artist.releaseIndicies;
+    var releases =[];
+    for(var i =0; i < artist.releaseIndicies.length;i++){
+	releases.push(artist.releaseIndicies[i]);
+    }
     return releases;
 };
 
@@ -438,7 +441,7 @@ PlaylistSong.prototype.equals = function(o){
 	this.playingListeners=[];
 	this.startedListeners=[];
 	this.curListeners=[];
-	this.videoErrorListeners=[];
+	this.errorListeners=[];
     };
 
 
@@ -595,7 +598,7 @@ Playlist.prototype.addArtistSong = function(genreName,styleName, artistName){
 
 Playlist.prototype.addRandomSong = function(releaseIndicies, genreName,styleName,artistName){
     if(releaseIndicies.length ==0){
-	this.fireEvent(this.videoErrorListeners,"Error: No Valid Songs Left to Add");
+	this.fireEvent(this.errorListeners,"Error: All Songs in this category are unavailable");
 	return;
     }
     var randomIndex = Math.floor(Math.random()*releaseIndicies.length);
@@ -612,7 +615,7 @@ Playlist.prototype.addRandomSong = function(releaseIndicies, genreName,styleName
 		var videoJSON = eval(this.responseText);
 		if(videoJSON.error){
 		    console.log("DOESNT WORK:"+ release.artist + " "+videoId);
-		    releasIndicies = releaseIndicies.splice(randomIndex,1);
+		    releaseIndicies.splice(randomIndex,1);
 		    playlist.addRandomSong(releaseIndicies, genreName,styleName,artistName);
 		}else{
 		    console.log("WORKS:"+ release.artist+ " "+videoId);
