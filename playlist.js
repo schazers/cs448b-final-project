@@ -123,7 +123,6 @@ playlistDiv.append("div")
     .attr("id","playlist")
     .style("overflow","auto")
     .style("width","200px")
-    .style("height","400px")
     .style("text-align","left");
 
 var player;
