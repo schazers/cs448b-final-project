@@ -239,7 +239,7 @@ Genre.prototype.toString = function(){
 
 function GenreTree(){
     this.genreTree = {};
-    this.name="Music";
+    this.name="All Genres";
     this.type = "GenreTree";
 };
 

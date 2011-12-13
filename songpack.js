@@ -43,7 +43,7 @@ function initSongPack(){
 	.attr("x",0)
 	.attr("y",20)
 	.style("font-size","30")
-	.text("Music");
+	.text("All Genres");
     genreTree.x=w/2;
     genreTree.y=h/2;
     genreTree.r=w/2;
@@ -90,7 +90,9 @@ function displayBubbleData(parent,enterTween,stayTween,exitTween){
 		return d.toString();
 	    });
 
-    d3.select("#parentTitle").text(parent.name);
+    d3.select("#parentTitle").text(parent.name)
+	.attr("transform", "translate(0, 6)")
+
     nodeData
 	.attr("class", function(d) { return d.depth ?  "leaf node":"parent node"; })
 	.attr("transform", function(d) { return "scale(0)"; });

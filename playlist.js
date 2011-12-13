@@ -1,8 +1,8 @@
-var BACKGROUND_COLOR = "#FFFFFF";
+var BACKGROUND_COLOR = "#F8F8F8";
 var PLAY_IMAGE = "play.png";
 var PAUSE_IMAGE = "pause.png";
-var PLAYLIST_ITEM_HIGHLIGHT_COLOR = "#5CB3FF";
-var PLAYLIST_ITEM_SELECT_COLOR = "#2B60DE";
+var PLAYLIST_ITEM_HIGHLIGHT_COLOR = "#DDDDFF";
+var PLAYLIST_ITEM_SELECT_COLOR = "#CCCCDE";
 var playlist = new Playlist(genreTree, releaseArray);
 
 playlist.songAddedListeners.push(handlePlaylistSongAdded);
@@ -18,10 +18,14 @@ playlist.curListeners.push(handlePlaylistCurChanged);
 var playlistDiv = d3.select("#playlistDiv")
     .attr("id","playlistDiv")
     .style("float","left")
-    .style("width","280px")
-    .style("font-size","x-large");
+    .style("width","340px")
+	.style("margin", "-62px 20px 0px 10px")
+    .style("font-size","20px")
 
-playlistDiv.append("h1").text("Playlist");
+playlistDiv.append("h1").text("Playlist")
+	.style("font-size", "32px")
+	.style("text-decoration", "none")
+	.style("font-weight", "normal")
 
 var selectedSongBoxDiv = playlistDiv.append("div")
     .attr("id","selectedSongBox")
@@ -44,7 +48,7 @@ selectedSongBoxDiv.append("div")
 selectedSongBoxDiv.append("div")
     .style("clear","both")
     .style("float","left")
-    .text("Genre:");
+    .text("Genre: ");
 
 selectedSongBoxDiv.append("div")
     .attr("id","genreInfoBox")
@@ -53,12 +57,11 @@ selectedSongBoxDiv.append("div")
 selectedSongBoxDiv.append("div")
     .style("clear","both")
     .style("float","left")
-    .text("Style:");
+    .text("Style: ");
 
 selectedSongBoxDiv.append("div")
     .attr("id","styleInfoBox")
     .style("float","left");
-
 
 
 
@@ -69,6 +72,7 @@ playlistDiv.append("div")
 
 var playlistControllerDiv = playlistDiv.append("div")
     .style("clear","both")
+	.style("margin-bottom", "70px")
     .attr("id","playlistControllerDiv");
 
 
@@ -77,6 +81,9 @@ playlistControllerDiv.append("button")
     .style("clear","both")
     .style("float","left")
     .text("Play")
+	.style("background-color", "#F0F0F0")
+	.style("font-size", "18px")
+	.style("font-family", "helvetica, Arial, sans-serif")
     .attr("disabled","true")
     .on("click",play);
 
@@ -84,6 +91,9 @@ playlistControllerDiv.append("button")
     .attr("id","playlistPauseButton")
     .style("float","left")
     .text("Pause")
+	.style("background-color", "#F0F0F0")
+	.style("font-size", "18px")
+	.style("font-family", "helvetica, Arial, sans-serif")
     .attr("disabled","true")
     .on("click",pause);
 
@@ -91,6 +101,9 @@ playlistControllerDiv.append("button")
     .attr("id","playlistStopButton")
     .style("float","left")
     .text("Stop")
+	.style("background-color", "#F0F0F0")
+	.style("font-size", "18px")
+	.style("font-family", "helvetica, Arial, sans-serif")
     .attr("disabled","true")
     .on("click",stop);
 
@@ -98,6 +111,9 @@ playlistControllerDiv.append("button")
     .attr("id","playlistNextButton")
     .style("float","left")
     .text("Next")
+	.style("background-color", "#F0F0F0")
+	.style("font-size", "18px")
+	.style("font-family", "helvetica, Arial, sans-serif")
     .attr("disabled","true")
     .on("click",next);
 
@@ -218,11 +234,11 @@ function handlePlaylistSelectedChanged(){
     var style = release.style;
 
     d3.select("#artistInfoBox")
-	.text(artist);
+	.text(" "+artist);
     d3.select("#genreInfoBox")
-	.text(genre);
+	.text(" "+genre);
     d3.select("#styleInfoBox")
-	.text(style);
+	.text(" "+style);
     displayPlaylist();
 };
 
@@ -267,7 +283,7 @@ function displayPlaylist(){
 	.on("mouseover",highlightPlaylistItem)
 	.on("mouseout",deHighlightPlaylistItem)
 	.on("click",selectSong)
-	.on("dblclick",playSelectedSong);
+	.on("dblclick",playSelectedSong)
 
     items.selectAll(".playlistAnnotate")
 	.data(function(d,i){return [d]})
@@ -279,12 +295,14 @@ function displayPlaylist(){
 	.style("background-repeat","no-repeat")
 	.style("background-position","left top");
 
-
     items.selectAll(".playlistBlurb")
 	.data(function(d,i){return [d];})
 	.attr("class","playlistBlurb")
-	.enter().append("div")
-	.text(getSongBlurb);
+	.enter().append("p")
+	.text(getSongBlurb)
+	.style("text-indent", "none")
+	.style("font-size", "14px")
+	.style("padding", "0px")
 
     if(playlist.started){
 	var cur = playlist.cur;
@@ -362,7 +380,7 @@ function getSongBlurb(song){
     var release = playlist.getRelease(releaseIndex);
     var name = release.name;
     var artist =release.artist;
-    var blurb = "\""+name +"\" - "+artist;
+    var blurb = artist+" - "+name;
     return blurb;
 }
 

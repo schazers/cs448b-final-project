@@ -1,3 +1,65 @@
+body {
+	margin: 0px;
+	background-color: #F8F8F8;
+	font-family: helvetica;
+}
+
+#wrapper {
+	margin: 0px;
+	overflow-x: hidden;
+}
+
+h1 {
+	margin-bottom: 0px;
+}
+
+#title {
+	padding: 8px;
+	background-color: #DDDDDD;
+	font-size: 38px;
+}
+
+#title_seperator {
+	background-color: #404040;
+	margin-bottom:22px;
+	height: 3px;
+}
+
+#switch {
+	font-size: 20px;
+	margin: 10px 0px 0px 380px;
+	padding: 6px;
+	border-top: 2px solid #404040;
+	border-left: 2px solid #404040;
+	border-right: 2px solid #404040;
+	width: 446px;
+	background-color: #EEEEEE;
+}
+
+#playlistDiv {
+
+}
+
+.switchButton {
+	background-color: #F0F0F0;
+	font-size: 20px;
+	font-family: Helvetica, Arial, sans-serif;
+}
+
+.switchButton.selectedButton {
+	color: #EEEEEE;
+	background-color: #444444;
+}
+
+#container {
+	margin-bottom: 80px;
+	background-color: #EEEEEE;
+	float: left;
+	border: 2px solid #404040;
+	padding: 20px;
+	padding-right: 20px;
+}
+
 .leaf circle {
   fill: #ff7f0e;
   fill-opacity: 1;
@@ -25,8 +87,32 @@ text {
    cursor:default;	
 }
 
-.playlistDiv{
-	float:left;
-	     width:280px;
-	      font-size:x-large;
+.playlistDiv {
+	float: left;
+	width: 280px;
+	font-size: x-large;
 }
+
+/* Footer */
+
+#footer {
+	display: block;
+	float: right;
+	min-width: 2000px;
+	overflow-x: hidden;
+	font: 11pt helvetica;
+	padding: 20px 20px 0 0;
+	text-align: right;
+	background-color: #444444;
+}
+
+#footer p {
+	margin: 0 0 3px 0;
+	color: #CACACA;
+}
+
+#footer a {
+	color: #AAAAAA;
+}
+
+

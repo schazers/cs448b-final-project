@@ -13,18 +13,23 @@
     <script type="text/javascript" src="loadData.js"></script>
   </head>
   <body>
+	
+	<div id="wrapper">
+	
+	<div id="title">Semi-Specific&nbsp;Musical&nbsp;Playlist&nbsp;Generator</div>
+	
+	<div id="title_seperator"></div>
+	
     <div id="switch" class="unselectable switches">
-      <button id="listSwitch" class="switchButton" onclick="handleSwitch(LIST_SWITCH)">List</button>
+	Choose an interaction type:
+      <button id="listSwitch" class="switchButton selectedButton" onclick="handleSwitch(LIST_SWITCH)">List</button>
       <button id="burstSwitch" class="switchButton" onclick="handleSwitch(BURST_SWITCH)">Burst</button>
       <button id="packSwitch" class="switchButton" onclick="handleSwitch(PACK_SWITCH)">Pack</button>
     </div>
-    <div id="playlistDiv" class="unselectable playlistDiv">
 
-    </div>
-    <div id="container" class="unselectable container">
+    <div id="playlistDiv" class="unselectable playlistDiv"></div>
 
-    </div>
-
+    <div id="container" class="unselectable container"></div>
 
     <script type="text/javascript" src="initVis.js"></script>
     <script type="text/javascript" src="playlist.js"></script>
@@ -33,6 +38,14 @@
     <script type="text/javascript" src="textList.js"></script>
     <script type="text/javascript" src="switch.js"></script>
 
+	<div id="footer">
+		<p>Created by Blake Carpenter and Jason Riggs : <a href="http://cs448b.stanford.edu" target="_blank">cs448b - Data Visualization</a> : Stanford University</p>
+		<p>Musical Metadata Source : <a href="http://www.discogs.com/data/" target="_blank">Discogs November 2011 XML Database Dump</a></p>
+		<p>Music source : <a href="http://www.youtube.com" target="_blank">YouTube</a></p>
+		<br />
+	</div>
+	
+	</div>
 
   </body>
 

@@ -1,6 +1,6 @@
 
-var LIST_ITEM_HIGHLIGHT_COLOR = "#5CB3FF";
-var LIST_ITEM_SELECT_COLOR = "#2B60DE";
+var LIST_ITEM_HIGHLIGHT_COLOR = "#DDDDFF";
+var LIST_ITEM_SELECT_COLOR = "#CCCCDE";
 
 var GENRE_UL_CLASS = "genreUL";
 var NON_GENRE_UL_CLASS = "nonGenreUL";
@@ -59,9 +59,10 @@ function createList(type,listClass){
 
 function setListStyle(){
     d3.selectAll(".listDiv")
-	.style("float","left");
+	.style("float","left")
+	.style("width", "250px");
     d3.selectAll(".ullist")
-	.style("height","300px")
+	.style("height","612px")
 	.style("overflow","auto");
     d3.selectAll(".list")
 	.style("width","150px")
@@ -85,7 +86,7 @@ function deHighlightListItem(d,i){
     if(isSelected=="true"){
 	d3.select( this ).style( "background",LIST_ITEM_SELECT_COLOR );
     }else{
-	d3.select( this ).style( "background",BACKGROUND_COLOR );
+	d3.select( this ).style( "background","#EEEEEE" );
     }
 }
 
@@ -97,7 +98,7 @@ function selectItem(d,i){
     d3.select(this.parentNode)
 	.selectAll("li")
 	.attr("selected","false")
-	.style( "background",BACKGROUND_COLOR );
+	.style( "background", "#EEEEEE" );
     
     d3.select( this ).style( "background",LIST_ITEM_SELECT_COLOR )
 	.attr("selected","true");
