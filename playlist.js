@@ -14,8 +14,6 @@ playlist.errorListeners.push(handleVideoError);
 
 
 
-
-
 var playlistDiv = d3.select("#playlistDiv")
     .attr("id","playlistDiv")
     .style("float","left")
@@ -63,8 +61,6 @@ selectedSongBoxDiv.append("div")
 selectedSongBoxDiv.append("div")
     .attr("id","styleInfoBox")
     .style("float","left");
-
-
 
 
 playlistDiv.append("div")
@@ -119,10 +115,22 @@ playlistControllerDiv.append("button")
     .on("click",next);
 
 playlistDiv.append("div")
+		.style("clear", "both")
+		.attr("id", "playlistErrors")
+		.style("overflow", "auto")
+		.style("height", "20px")
+		.style("font-size", "14px")
+		.style("color", "#880000")
+		.text("THERE WAS AN ERROR")
+		
+d3.select("#playlistErrors")
+	.text("VIDEO DOESNT EXIST.. LOADING NEXT SONG")
+	
+playlistDiv.append("div")
     .style("clear","both")
     .attr("id","playlist")
     .style("overflow","auto")
-    .style("width","200px")
+    .style("width","340px")
     .style("text-align","left");
 
 var player;
