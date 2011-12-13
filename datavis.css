@@ -6,7 +6,9 @@ body {
 
 #wrapper {
 	margin: 0px;
-	overflow-x: hidden;
+	overflow: hidden;
+	white-space: nowrap;
+	min-width: 2000px;
 }
 
 h1 {
