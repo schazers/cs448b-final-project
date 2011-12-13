@@ -277,7 +277,9 @@ function onPlayerStateChange(event) {
 
 
 function displayPlaylist(){
-    var pList = d3.select("#playlist");
+    var pList = d3.select("#playlist")
+	.style("width", "340px")
+	
     var songs = playlist.list;
 
     var items = pList.selectAll(".playlistItem")
