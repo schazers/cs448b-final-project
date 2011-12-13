@@ -7,4 +7,3 @@ function handleSwitch(switchVal){
 	initSongPack();
     }
 }
-initSongList();
